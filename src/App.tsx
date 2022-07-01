@@ -1,38 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
+import UserRow from './user-row';
+import useUsers from './use-users.hook';
 
 function App() {
-    const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(5);
-    const [users, setUsers] = useState<any[]>([]);
-    const [total, setTotal] = useState(0);
-
-    const resetFilters = useCallback(() => {
-        setPage(1);
-        setPerPage(5);
-    }, []);
-
-    useEffect(() => {
-        const loadUsers = async () => {
-            const response = await fetch(
-                `${process.env.REACT_APP_API_URL}/users?per_page=${
-                    perPage * page
-                }`,
-            );
-
-            if (response.ok) {
-                const { total, data } = await response.json();
-                setTotal(total);
-                setUsers(data);
-            } else {
-                alert(
-                    'There was an error on fetch: ' + (await response.text()),
-                );
-            }
-        };
-
-        loadUsers();
-    }, [page, perPage]);
+    const { setPage, perPage, setPerPage, total, users, resetFilters } =
+        useUsers();
 
     return (
         <div className="App">
@@ -54,17 +27,7 @@ function App() {
 
             <div className="users-list">
                 {users.map((user) => (
-                    <div className="user-item" key={`user-${user.id}`}>
-                        <img
-                            src={user.avatar}
-                            alt={`${user.first_name} ${user.last_name}'s Avatar`}
-                            className="user-item--avatar"
-                        />
-                        <span className="user-item--name">
-                            {user.first_name} {user.last_name}
-                        </span>
-                        <span className="user-item--email">({user.email})</span>
-                    </div>
+                    <UserRow key={`user-${user.id}`} user={user} />
                 ))}
             </div>
 
