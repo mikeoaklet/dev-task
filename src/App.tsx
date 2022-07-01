@@ -15,7 +15,9 @@ function App() {
     useEffect(() => {
         const loadUsers = async () => {
             const response = await fetch(
-                `https://reqres.in/api/users?per_page=${perPage * page}`,
+                `${process.env.REACT_APP_API_URL}/users?per_page=${
+                    perPage * page
+                }`,
             );
 
             if (response.ok) {
